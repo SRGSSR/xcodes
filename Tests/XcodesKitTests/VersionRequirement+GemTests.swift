@@ -2,218 +2,170 @@ import XCTest
 import Version
 @testable import XcodesKit
 
-final class VersionRequirementTests: XCTestCase {
+final class VersionRequirementGemTests: XCTestCase {
     func test_SingleVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, patch: 3)
+        let requirement = VersionRequirement(gemVersion: "1.2.3")!
         XCTAssertEqual(requirement.minimumVersion, Version(major: 1, minor: 2, patch: 3))
         XCTAssertEqual(requirement.maximumVersion, Version(major: 1, minor: 2, patch: 3))
     }
-    
+
     func test_SingleVersionWithIdentifiers() {
-        let requirement = VersionRequirement(
-            major: 1,
-            minor: 2,
-            patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"]
-        )
+        let requirement = VersionRequirement(gemVersion: "1.2.3b4")!
         XCTAssertEqual(requirement.minimumVersion, Version(
             major: 1,
             minor: 2,
             patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"]
+            prereleaseIdentifiers: ["Beta", "4"]
         ))
         XCTAssertEqual(requirement.maximumVersion, Version(
             major: 1,
             minor: 2,
             patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"]
+            prereleaseIdentifiers: ["Beta", "4"]
         ))
     }
-    
+
     func test_InitGreaterThanOrEqualToMajorVersion() {
-        let requirement = VersionRequirement(major: 1, rangeOperator: .greaterThanOrEqual)
+        let requirement = VersionRequirement(gemVersion: ">= 1")!
         XCTAssertEqual(requirement.minimumVersion, Version(major: 1, minor: 0, patch: 0))
         XCTAssertEqual(requirement.maximumVersion, .max)
     }
-    
+
     func test_InitGreaterThanOrEqualToMinorVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, rangeOperator: .greaterThanOrEqual)
+        let requirement = VersionRequirement(gemVersion: ">= 1.2")!
         XCTAssertEqual(requirement.minimumVersion, Version(major: 1, minor: 2, patch: 0))
         XCTAssertEqual(requirement.maximumVersion, .max)
     }
-    
+
     func test_InitGreaterThanOrEqualToPatchVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, patch: 3, rangeOperator: .greaterThanOrEqual)
+        let requirement = VersionRequirement(gemVersion: ">= 1.2.3")!
         XCTAssertEqual(requirement.minimumVersion, Version(major: 1, minor: 2, patch: 3))
         XCTAssertEqual(requirement.maximumVersion, .max)
     }
-    
+
     func test_InitGreaterThanOrEqualToVersionWithIdentifiers() {
-        let requirement = VersionRequirement(
-            major: 1,
-            minor: 2,
-            patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"],
-            rangeOperator: .greaterThanOrEqual
-        )
+        let requirement = VersionRequirement(gemVersion: ">= 1.2.3b4")!
         XCTAssertEqual(requirement.minimumVersion, Version(
             major: 1,
             minor: 2,
             patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"]
+            prereleaseIdentifiers: ["Beta", "4"]
         ))
         XCTAssertEqual(requirement.maximumVersion, .max)
     }
-    
+
     func test_InitGreaterThanMajorVersion() {
-        let requirement = VersionRequirement(major: 1, rangeOperator: .greaterThan)
+        let requirement = VersionRequirement(gemVersion: "> 1")!
         XCTAssertEqual(requirement.minimumVersion, Version(major: 1, minor: 0, patch: 1))
         XCTAssertEqual(requirement.maximumVersion, .max)
     }
-    
+
     func test_InitGreaterThanMinorVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, rangeOperator: .greaterThan)
+        let requirement = VersionRequirement(gemVersion: "> 1.2")!
         XCTAssertEqual(requirement.minimumVersion, Version(major: 1, minor: 2, patch: 1))
         XCTAssertEqual(requirement.maximumVersion, .max)
     }
-    
+
     func test_InitGreaterThanPatchVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, patch: 3, rangeOperator: .greaterThan)
+        let requirement = VersionRequirement(gemVersion: "> 1.2.3")!
         XCTAssertEqual(requirement.minimumVersion, Version(major: 1, minor: 2, patch: 4))
         XCTAssertEqual(requirement.maximumVersion, .max)
     }
-    
+
     func test_InitGreaterThanVersionWithIdentifiers() {
-        let requirement = VersionRequirement(
-            major: 1,
-            minor: 2,
-            patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"],
-            rangeOperator: .greaterThan
-        )
+        let requirement = VersionRequirement(gemVersion: "> 1.2.3b4")!
         XCTAssertEqual(requirement.minimumVersion, Version(
             major: 1,
             minor: 2,
             patch: 4,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"]
+            prereleaseIdentifiers: ["Beta", "4"]
         ))
         XCTAssertEqual(requirement.maximumVersion, .max)
     }
-    
+
     func test_InitLessThanOrEqualToMajorVersion() {
-        let requirement = VersionRequirement(major: 1, rangeOperator: .lessThanOrEqual)
+        let requirement = VersionRequirement(gemVersion: "<= 1")!
         XCTAssertEqual(requirement.minimumVersion, .min)
         XCTAssertEqual(requirement.maximumVersion, Version(major: 1, minor: 0, patch: 0))
     }
-    
+
     func test_InitLessThanOrEqualToMinorVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, rangeOperator: .lessThanOrEqual)
+        let requirement = VersionRequirement(gemVersion: "<= 1.2")!
         XCTAssertEqual(requirement.minimumVersion, .min)
         XCTAssertEqual(requirement.maximumVersion, Version(major: 1, minor: 2, patch: 0))
     }
-    
+
     func test_InitLessThanOrEqualToPatchVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, patch: 3, rangeOperator: .lessThanOrEqual)
+        let requirement = VersionRequirement(gemVersion: "<= 1.2.3")!
         XCTAssertEqual(requirement.minimumVersion, .min)
         XCTAssertEqual(requirement.maximumVersion, Version(major: 1, minor: 2, patch: 3))
     }
-    
+
     func test_InitLessThanOrEqualToVersionWithIdentifiers() {
-        let requirement = VersionRequirement(
-            major: 1,
-            minor: 2,
-            patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"],
-            rangeOperator: .lessThanOrEqual
-        )
+        let requirement = VersionRequirement(gemVersion: "<= 1.2.3b4")!
         XCTAssertEqual(requirement.minimumVersion, .min)
         XCTAssertEqual(requirement.maximumVersion, Version(
             major: 1,
             minor: 2,
             patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"]
+            prereleaseIdentifiers: ["Beta", "4"]
         ))
     }
-    
+
     func test_InitLessThanMajorVersion() {
-        let requirement = VersionRequirement(major: 1, rangeOperator: .lessThan)
+        let requirement = VersionRequirement(gemVersion: "< 1")!
         XCTAssertEqual(requirement.minimumVersion, .min)
         XCTAssertEqual(requirement.maximumVersion, Version(major: 0, minor: .max, patch: .max))
     }
-    
+
     func test_InitLessThanMinorVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, rangeOperator: .lessThan)
+        let requirement = VersionRequirement(gemVersion: "< 1.2")!
         XCTAssertEqual(requirement.minimumVersion, .min)
         XCTAssertEqual(requirement.maximumVersion, Version(major: 1, minor: 1, patch: .max))
     }
-    
+
     func test_InitLessThanPatchVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, patch: 3, rangeOperator: .lessThan)
+        let requirement = VersionRequirement(gemVersion: "< 1.2.3")!
         XCTAssertEqual(requirement.minimumVersion, .min)
         XCTAssertEqual(requirement.maximumVersion, Version(major: 1, minor: 2, patch: 2))
     }
-    
+
     func test_InitLessThanVersionWithIdentifiers() {
-        let requirement = VersionRequirement(
-            major: 1,
-            minor: 2,
-            patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"],
-            rangeOperator: .lessThan
-        )
+        let requirement = VersionRequirement(gemVersion: "< 1.2.3b4")!
         XCTAssertEqual(requirement.minimumVersion, .min)
         XCTAssertEqual(requirement.maximumVersion, Version(
             major: 1,
             minor: 2,
             patch: 2,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"]
+            prereleaseIdentifiers: ["Beta", "4"]
         ))
     }
-    
+
     func test_TildeGreaterThanMajorVersion() {
-        let requirement = VersionRequirement(major: 1, rangeOperator: .tildeGreaterThan)
+        let requirement = VersionRequirement(gemVersion: "~> 1")!
         XCTAssertEqual(requirement.minimumVersion, Version(major: 1, minor: 0, patch: 0))
         XCTAssertEqual(requirement.maximumVersion, Version(major: 1, minor: .max, patch: .max))
     }
-    
+
     func test_TildeGreaterThanMinorVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, rangeOperator: .tildeGreaterThan)
+        let requirement = VersionRequirement(gemVersion: "~> 1.2")!
         XCTAssertEqual(requirement.minimumVersion, Version(major: 1, minor: 2, patch: 0))
         XCTAssertEqual(requirement.maximumVersion, Version(major: 1, minor: .max, patch: .max))
     }
-    
+
     func test_TildeGreaterThanPatchVersion() {
-        let requirement = VersionRequirement(major: 1, minor: 2, patch: 3, rangeOperator: .tildeGreaterThan)
+        let requirement = VersionRequirement(gemVersion: "~> 1.2.3")!
         XCTAssertEqual(requirement.minimumVersion, Version(major: 1, minor: 2, patch: 3))
         XCTAssertEqual(requirement.maximumVersion, Version(major: 1, minor: 2, patch: .max))
     }
-    
+
     func test_TildeGreaterThanVersionWithIdentifiers() {
-        let requirement = VersionRequirement(
-            major: 1,
-            minor: 2,
-            patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"],
-            rangeOperator: .tildeGreaterThan
-        )
+        let requirement = VersionRequirement(gemVersion: "~> 1.2.3b4")!
         XCTAssertEqual(requirement.minimumVersion, Version(
             major: 1,
             minor: 2,
             patch: 3,
-            prereleaseIdentifiers: ["Beta", "4"],
-            buildMetadataIdentifiers: ["Build", "5"]
+            prereleaseIdentifiers: ["Beta", "4"]
         ))
         XCTAssertEqual(requirement.maximumVersion, Version(
             major: 1,
@@ -221,16 +173,34 @@ final class VersionRequirementTests: XCTestCase {
             patch: .max
         ))
     }
-    
+
     func test_VersionLessThanZeroIsRoundedToZero() {
-        let requirement = VersionRequirement(major: 0, rangeOperator: .lessThan)
+        let requirement = VersionRequirement(gemVersion: "< 0")!
         XCTAssertEqual(requirement.minimumVersion, .min)
         XCTAssertEqual(requirement.maximumVersion, .min)
     }
-    
+
     func test_VersionLessThanOrEqualToZeroIsValid() {
-        let requirement = VersionRequirement(major: 0, rangeOperator: .lessThanOrEqual)
+        let requirement = VersionRequirement(gemVersion: "<= 0")!
         XCTAssertEqual(requirement.minimumVersion, .min)
         XCTAssertEqual(requirement.maximumVersion, .min)
+    }
+
+    func test_SpacesInVersionAreIgnored() {
+        let requirement1 = VersionRequirement(gemVersion: "1.2.3")!
+        let requirement2 = VersionRequirement(gemVersion: "  1.2.3  ")!
+        XCTAssertEqual(requirement1, requirement2)
+    }
+
+    func test_SpacesInVersionWithOperatorAreSuperfluous() {
+        let requirement1 = VersionRequirement(gemVersion: "~> 1.2.3")!
+        let requirement2 = VersionRequirement(gemVersion: "~>1.2.3")!
+        XCTAssertEqual(requirement1, requirement2)
+    }
+
+    func test_SpacesInVersionWithOperatorAreIgnored() {
+        let requirement1 = VersionRequirement(gemVersion: "~> 1.2.3")!
+        let requirement2 = VersionRequirement(gemVersion: "  ~>  1.2.3  ")!
+        XCTAssertEqual(requirement1, requirement2)
     }
 }
