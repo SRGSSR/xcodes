@@ -15,7 +15,7 @@ public struct GemVersion: Hashable {
     
     /// The operator describing the range associated with the version.
     public let rangeOperator: RangeOperator?
-    
+
     /**
      Create a version object.
      - Note: Integers are made absolute since negative integers are not allowed, yet it is conventional Swift to take `Int` over `UInt` where possible.
@@ -40,6 +40,7 @@ public struct GemVersion: Hashable {
         self.rangeOperator = rangeOperator
     }
 
+    /// Create a version object from a Gem:Version string.
     public init?(_ string: String) {
         let range = NSRange(string.startIndex..<string.endIndex, in: string)
         let operators = RangeOperator.allCases.map(\.rawValue).joined(separator: "|")
