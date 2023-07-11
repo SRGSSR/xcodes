@@ -6,14 +6,6 @@ extension Version {
     static var max: Self = .init(.max, .max, .max)
 }
 
-public enum RangeOperator: String, CaseIterable {
-    case greaterThanOrEqual = ">="
-    case greaterThan = ">"
-    case lessThanOrEqual = "<="
-    case lessThan = "<"
-    case tildeGreaterThan = "~>"
-}
-
 public struct VersionRequirement: Equatable {
     let minimumVersion: Version
     let maximumVersion: Version
