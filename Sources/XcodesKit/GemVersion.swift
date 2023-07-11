@@ -39,4 +39,47 @@ public struct GemVersion: Hashable {
         self.prereleaseIdentifiers = prereleaseIdentifiers
         self.rangeOperator = rangeOperator
     }
+
+    public init?(_ string: String) {
+        let range = NSRange(string.startIndex..<string.endIndex, in: string)
+        let operators = RangeOperator.allCases.map(\.rawValue).joined(separator: "|")
+        let pattern = "^\\s*(?<operator>\(operators))?\\s*(?<major>\\d+)\\.?(?<minor>\\d?)?\\.?(?<patch>\\d?)?\\.?(?<prereleaseType>\\w?)?\\.?(?<prereleaseVersion>\\d?)"
+
+        guard
+            let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
+            let match = regex.firstMatch(in: string, options: [], range: range),
+            let majorString = match.groupNamed("major", in: string),
+            let major = Int(majorString),
+            let minorString = match.groupNamed("minor", in: string),
+            let patchString = match.groupNamed("patch", in: string)
+        else { return nil }
+
+        let minor = Int(minorString)
+        let patch = Int(patchString)
+        let prereleaseIdentifiers = [
+            match.groupNamed("prereleaseType", in: string),
+            match.groupNamed("prereleaseVersion", in: string)
+        ].compactMap { $0 }
+            .filter { !$0.isEmpty }
+            .map { identifier -> String in
+                switch identifier.lowercased() {
+                case "a": return "Alpha"
+                case "b": return "Beta"
+                default: return identifier
+                }
+            }
+
+        if let rangeOperatorString = match.groupNamed("operator", in: string) {
+            self = .init(
+                major,
+                minor,
+                patch,
+                prereleaseIdentifiers: prereleaseIdentifiers,
+                rangeOperator: .init(rawValue: rangeOperatorString)
+            )
+        }
+        else {
+            self = .init(major, minor, patch, prereleaseIdentifiers: prereleaseIdentifiers)
+        }
+    }
 }
